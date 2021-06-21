@@ -31,14 +31,14 @@ function App() {
     }, []); // Or [] if effect doesn't need props or state
 
     return (
-        <div className="App">
-            <header className="App-header">
+        <section className="App h-screen w-full flex justify-center items-center bg-green-500">
+            <div className="w-full max-w-md bg-gray-800">
                 <img alt="exercise" id="video"
                      crossOrigin='anonymous'
                      src={model1}/>
                 {keyPoints}
-            </header>
-        </div>
+            </div>
+        </section>
     );
 }
 
