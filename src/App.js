@@ -71,14 +71,17 @@ function App() {
     }
 
     const renderResult = async () => {
-        if (!cameraReady) {
-            await new Promise(resolve => {
-                resolve(true);
-            });
+        const video = webcamRef.current && webcamRef.current['video'];
+
+        if (!cameraReady && !video) {
+            return;
+        }
+
+        if (video.readyState < 2) {
+            return;
         }
 
         beginEstimatePosesStats();
-        const video = webcamRef.current && webcamRef.current['video'];
         const poses = await detector.estimatePoses(video, {
             maxPoses: MOVENET_CONFIG.maxPoses, //When maxPoses = 1, a single pose is detected
             flipHorizontal: false
@@ -122,6 +125,7 @@ function App() {
 
         canvasFullScreen.width = videoWidth;
         canvasFullScreen.height = videoHeight;
+        ctxFullScreen.fillRect(0, 0, videoWidth, videoHeight);
 
         ctxFullScreen.translate(video.videoWidth, 0);
         ctxFullScreen.scale(-1, 1);
@@ -212,6 +216,7 @@ function App() {
             <div className="bg-gray-800">
                 <Webcam
                     className="filter blur-lg"
+                    style={{visibility: "hidden"}}
                     ref={webcamRef}
                     audio={false}
                     height={isMobile ? 270 : 720}
@@ -220,7 +225,7 @@ function App() {
                     onUserMediaError={onUserMediaError}
                     onUserMedia={onUserMedia}/>
                 <canvas className="absolute" id="output-full-screen"/>
-                <label>{displayFps}</label>
+                <label className="text-white">FPS: {displayFps}</label>
             </div>
         </section>
     );
